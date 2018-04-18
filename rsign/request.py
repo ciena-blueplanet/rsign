@@ -1,6 +1,6 @@
 # Copyright(c) 2014, Cyan, Inc. All rights reserved.
-from rsign.signature import HMACBase64Signature
 import re
+from rsign.signature import HMACBase64Signature
 
 
 def get_auth_header_values(header_string):

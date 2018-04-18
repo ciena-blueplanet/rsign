@@ -27,7 +27,7 @@ setup(
     description="Sign HTTP(S) requests using HMAC",
     long_description=open('README.md').read(),
     tests_require=["tox"],
-    cmdclass= {"test": Tox},
+    cmdclass={"test": Tox},
     classifiers=[
         'License :: OSI Approved :: BSD License',
     ],
