@@ -4,12 +4,12 @@ import hashlib
 import binascii
 
 
-def _clean(string):
-    """ Unicode to Byte conversion """
-    try:
-        return str(string)
-    except UnicodeEncodeError:
-        return string.encode('utf-8')
+def _clean(string_or_bytes):
+    """ String to Byte conversion """
+    if isinstance(string_or_bytes, (bytes, bytearray)):
+        return string_or_bytes
+
+    return string_or_bytes.encode('utf-8')
 
 
 if not hasattr(hmac, 'compare_digest'):
