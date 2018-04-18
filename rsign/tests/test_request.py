@@ -2,13 +2,12 @@
 """
 Copyright(c) 2014, Cyan, Inc. All rights reserved.
 """
-
 import os
 import time
 import unittest
 from binascii import hexlify
 from rsign import SignedRequest, get_auth_header_values
-from rsign.signature import _clean
+from rsign.request import to_string, to_bytes
 
 
 class TestRequest(unittest.TestCase):
@@ -35,10 +34,12 @@ class TestRequest(unittest.TestCase):
                         "Verify a signed request header authenticates properly.")
         self.assertFalse(self.request.verify_signed_header(auth_header[1], self.key[:-1]),
                          "Verify a tampered with key or request doesn't verify properly")
-        self.request.method = "GET"
+
+        self.request.method = b"GET"
         self.assertFalse(self.request.verify_signed_header(auth_header[1], self.key),
                          "Verify a tampered with key or request doesn't verify properly")
-        self.request.method, self.request.path = "POST", "/not/path"
+
+        self.request.method, self.request.path = b"POST", b"/not/path"
         self.assertFalse(self.request.verify_signed_header(auth_header[1], self.key),
                          "Verify a tampered with key or request doesn't verify properly")
 
@@ -56,16 +57,25 @@ class TestRequest(unittest.TestCase):
         self.assertEqual(expect, actual, 'Assert header values are equivalent')
 
 
-class TestClean(unittest.TestCase):
+class TestToBytes(unittest.TestCase):
 
-    def test_clean_should_convert_unicode_to_bytes(self):
-        self.assertEqual(_clean(u'Hello'), b'Hello')
+    def test_to_bytes_should_convert_unicode_to_bytes(self):
+        self.assertEqual(to_bytes(u'Hello'), b'Hello')
 
-    def test_clean_should_convert_string_to_bytes(self):
-        self.assertEqual(_clean('Hello'), b'Hello')
+    def test_to_bytes_should_convert_string_to_bytes(self):
+        self.assertEqual(to_bytes('Hello'), b'Hello')
 
-    def test_clean_should_leave_bytes_as_is(self):
-        self.assertEqual(_clean(b'Hello'), b'Hello')
+    def test_to_bytes_should_leave_bytes_as_is(self):
+        self.assertEqual(to_bytes(b'Hello'), b'Hello')
+
+
+class TestToString(unittest.TestCase):
+
+    def test_to_bytes_should_convert_bytes_to_string(self):
+        self.assertEqual(to_string(b'Hello'), 'Hello')
+
+    def test_to_bytes_should_leave_string_as_is(self):
+        self.assertEqual(to_string('Hello'), 'Hello')
 
 
 if __name__ == '__main__':
