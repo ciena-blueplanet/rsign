@@ -4,14 +4,6 @@ import hashlib
 import binascii
 
 
-def _clean(string):
-    """ Unicode to Byte conversion """
-    try:
-        return str(string)
-    except UnicodeEncodeError:
-        return string.encode('utf-8')
-
-
 if not hasattr(hmac, 'compare_digest'):
     # Backport compare_digest to python 2.X
     # see http://bugs.python.org/review/15061/diff2/5181:5214/Lib/hmac.py
@@ -69,7 +61,6 @@ class HMACSignature(Signature):
 
     def sign_string(self, key, text):
         """ Return the signing method's digest """
-        key, text = _clean(key), _clean(text)
         return hmac.new(key, text, self.hash_fn).digest()
 
 
@@ -86,7 +77,7 @@ class Base64Mixin(Signature):
     def sign_string(self, key, text):
         """ Return the signing method's digest """
         binary = super(Base64Mixin, self).sign_string(key, text)
-        return binascii.b2a_base64(binary).replace('\n', '')
+        return binascii.b2a_base64(binary).replace(b'\n', b'')
 
 
 class HMACBase64Signature(Base64Mixin, HMACSignature):
